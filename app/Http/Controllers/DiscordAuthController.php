@@ -33,26 +33,29 @@ class DiscordAuthController extends Controller
         $user = Auth::user()->with('servers')->first();
         // TODO: Instead of detaching all the servers and retaching them, just loop to see which ones
         // In the db are no longer in the API response.
-
         // Update Users Servers
         $servers = Http::withToken($user->discord_token)->acceptJson()->get("https://discord.com/api/v10/users/@me/guilds")->json();
         collect($servers)->map(function ($server) use ($user){
             $serverExists = Server::where('id', $server['id'])->first();
-            if($serverExists){
-                $serverExists->name = $server['name'];
-                $serverExists->server_icon = $server['icon'];
-                $serverExists->save();
-                if($user->servers()->where('server_id',$serverExists->id)->count() == 0){
-                    $user->servers()->attach($serverExists->id, ['is_owner'=>$server["owner"]]);
+                if($serverExists){
+                    $serverExists->name = $server['name'];
+                    $serverExists->server_icon = $server['icon'];
+                    $serverExists->save();
+                    if($user->servers()->where('server_id',$serverExists->id)->count() == 0){
+                        $user->servers()->attach($serverExists->id, ['is_owner'=>$server["owner"]]);
+                    }
+                }else{
+                    $inServer = Http::withHeader("Authorization","Bot " . config("services.discord.bot_secret"))->acceptJson()->get("https://discord.com/api/v10/guilds/".$server['id']."/members/".config("services.discord.bot_userid"));
+                    if(!$inServer->clientError()){
+                        $newServer = new Server();
+                        $newServer->id = $server['id'];
+                        $newServer->name = $server['name'];
+                        $newServer->server_icon = $server['icon'];
+                        $newServer->save();
+                        $user->servers()->attach($newServer->id, ['is_owner'=>$server["owner"]]);
+                    }
                 }
-            }else{
-                $newServer = new Server();
-                $newServer->id = $server['id'];
-                $newServer->name = $server['name'];
-                $newServer->server_icon = $server['icon'];
-                $newServer->save();
-                $user->servers()->attach($newServer->id, ['is_owner'=>$server["owner"]]);
-            }
+
         });
         return redirect('/');
     }
