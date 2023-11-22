@@ -45,6 +45,7 @@ class DiscordAuthController extends Controller
                         $user->servers()->attach($serverExists->id, ['is_owner'=>$server["owner"]]);
                     }
                 }else{
+                    // Check if in server using discord API.
                     $inServer = Http::withHeader("Authorization","Bot " . config("services.discord.bot_secret"))->acceptJson()->get("https://discord.com/api/v10/guilds/".$server['id']."/members/".config("services.discord.bot_userid"));
                     if(!$inServer->clientError()){
                         $newServer = new Server();
