@@ -1,10 +1,8 @@
 <script setup>
 import Layout from "./Layout.vue";
 import { Head, Link } from "@inertiajs/vue3";
-import Test from "./Test.vue";
 defineProps({
 	user: Object,
-	servers: Object,
 	logged_in: Boolean
 });
 </script>
@@ -13,35 +11,26 @@ defineProps({
 	<Head>
 		<title>Home</title>
 	</Head>
-	<Layout>
-		<h1 class="mt-10 text-center text-5xl font-black text-white">
-			<span v-if="!logged_in">Welcome!</span>
-			<span v-else>Select A Server</span>
-		</h1>
-		<p v-if="logged_in">You are logged in!</p>
-		<div v-if="logged_in">
-			<strong class="text-white">Your Servers</strong>
-			<ul class="list-inside list-disc text-white">
-				<li
-					:class="{ 'text-red-500': server['pivot']['is_owner'] }"
-					v-for="server in servers"
-				>
-					{{ server.name }}
-				</li>
-			</ul>
+	<Layout v-if="logged_in">Test</Layout>
+	<div
+		v-if="!logged_in"
+		class="flex h-screen w-full"
+	>
+		<div class="card mx-auto my-auto max-w-96 flex-row bg-neutral text-lg text-neutral-content">
+			<div class="card-body items-center text-center">
+				<h2 class="card-title">Login</h2>
+				<p>Please login to view your feed.</p>
+				<div class="card-actions">
+					<a
+						role="button"
+						href="/auth/discord"
+						class="btn btn-primary text-lg text-white"
+					>
+						<i class="fa-brands fa-discord"></i> Login With Discord
+					</a>
+				</div>
+			</div>
 		</div>
-		<a
-			v-if="logged_in"
-			class="underline"
-			href="/logout"
-			>Logout</a
-		>
-		<a
-			v-else
-			class="bg-blurple hover:text-blurple rounded-lg px-3 py-2 text-center text-xl font-bold tracking-wide text-white shadow-sm transition duration-300 ease-in-out hover:bg-white hover:shadow-xl"
-			href="/auth/discord"
-			><i class="fa-brands fa-discord"></i> Login With Discord</a
-		>
-	</Layout>
+	</div>
 </template>
 <style lang="postcss"></style>

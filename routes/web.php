@@ -14,15 +14,14 @@ use Laravel\Socialite\Facades\Socialite;
 |
 */
 
-Route::get('/', [\App\Http\Controllers\HomeController::class, 'index']);
-Route::get('/test', function (){
-    return Inertia::render('Test');
-})->middleware(\App\Http\Middleware\Authenticate::class);
+Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name("home");
+Route::get('/servers', [\App\Http\Controllers\BrowseController::class, 'servers'])->middleware(\App\Http\Middleware\Authenticate::class)->name("servers");
 
+
+// Auth
 Route::get("/auth/discord", function (){
     return Socialite::driver('discord')->setScopes(['identify','guilds'])->redirect();
 })->name('login');
-
 
 Route::get('/auth/discord/callback',  [\App\Http\Controllers\DiscordAuthController::class, 'auth']);
 Route::get('/logout', function (){

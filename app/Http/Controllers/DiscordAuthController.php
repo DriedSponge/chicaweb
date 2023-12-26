@@ -23,7 +23,7 @@ class DiscordAuthController extends Controller
             Auth::login($userExists);
         }else{
             $newUser = new User();
-            $newUser->id = $callbackUser->id;
+            $newUser->id = (string) $callbackUser->id;
             $newUser->discord_token = $callbackUser->token;
             $newUser->name = $callbackUser->name;
             $newUser->avatar = $callbackUser->avatar;

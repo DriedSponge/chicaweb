@@ -11,11 +11,7 @@ class HomeController extends Controller
     public function index(Request $request): \Inertia\Response
     {
         if(Auth::check()){
-            return Inertia::render('Home', [
-                'user' => $request->user(),
-                'servers'=>$request->user()->servers()->get(),
-                'logged_in'=>true
-            ]);
+            return Inertia::render('Home');
         }else{
             return Inertia::render('Home', [
                 'user' => null,

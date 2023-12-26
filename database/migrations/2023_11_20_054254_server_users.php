@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create("server_users", function (Blueprint $table) {
             $table->id();
-            $table->foreignId("user_id");
-            $table->foreignId("server_id");
+            $table->string("user_id");
+            $table->string("server_id");
             $table->boolean("is_owner")->default(false);
         });
     }

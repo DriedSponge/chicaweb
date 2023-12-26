@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('servers', function (Blueprint $table) {
-            $table->bigInteger('id')->unique()->primary();
+            $table->string('id')->unique()->primary();
             $table->string('name');
             $table->string('server_icon')->nullable();
             $table->timestamps();
