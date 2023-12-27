@@ -3,6 +3,7 @@ import Layout from "./Layout.vue";
 import { Head, Link } from "@inertiajs/vue3";
 defineProps({
 	user: Object,
+	uploads: Object,
 	logged_in: Boolean
 });
 </script>
@@ -11,7 +12,13 @@ defineProps({
 	<Head>
 		<title>Home</title>
 	</Head>
-	<Layout v-if="logged_in">Test</Layout>
+	<Layout v-if="logged_in">
+		<ul>
+			<li v-for="upload in uploads">
+				{{ upload }}
+			</li>
+		</ul>
+	</Layout>
 	<div
 		v-if="!logged_in"
 		class="flex h-screen w-full"

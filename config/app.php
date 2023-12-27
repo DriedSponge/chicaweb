@@ -185,4 +185,6 @@ return [
         // 'Example' => App\Facades\Example::class,
     ])->toArray(),
 
+    // Interaction key for the bot to make request.
+    "interaction_key"=>env("APP_INTERACTION_KEY")
 ];

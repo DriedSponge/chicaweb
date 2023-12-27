@@ -11,6 +11,7 @@ use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
+    public $incrementing = false;
 
     protected $keyType = 'string';
     /**
@@ -19,6 +20,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'name',
         'avatar',
         'discord_token',
@@ -38,5 +40,14 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Server::class,"server_users","user_id","server_id")->withPivot('is_owner');
     }
-
+    public function uploads(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Upload::class, "user_id");
+    }
+    public function allUploads()
+    {
+        return Upload::whereHas('server', function ($query) {
+            $query->whereIn('id', $this->servers->pluck('id'));
+        });
+    }
 }

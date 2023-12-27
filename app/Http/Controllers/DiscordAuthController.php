@@ -14,26 +14,12 @@ class DiscordAuthController extends Controller
     public function auth()
     {
         $callbackUser = Socialite::driver('discord')->user();
-        $userExists = User::where('id', $callbackUser->id)->first();
-        if($userExists){
-            $userExists->discord_token = $callbackUser->token;
-            $userExists->name = $callbackUser->name;
-            $userExists->avatar = $callbackUser->avatar;
-            $userExists->save();
-            Auth::login($userExists);
-        }else{
-            $newUser = new User();
-            $newUser->id = (string) $callbackUser->id;
-            $newUser->discord_token = $callbackUser->token;
-            $newUser->name = $callbackUser->name;
-            $newUser->avatar = $callbackUser->avatar;
-            $newUser->save();
-            Auth::login($newUser);
-        }
-        $user = Auth::user()->with('servers')->first();
-        // TODO: Instead of detaching all the servers and retaching them, just loop to see which ones
-        // In the db are no longer in the API response.
-        // Update Users Servers
+        $user = User::findOrNew($callbackUser->id);
+        $user->discord_token = $callbackUser->token;
+        $user->name = $callbackUser->name;
+        $user->avatar = $callbackUser->avatar;
+        $user->save();
+        Auth::login($user);
         $servers = Http::withToken($user->discord_token)->acceptJson()->get("https://discord.com/api/v10/users/@me/guilds")->json();
         collect($servers)->map(function ($server) use ($user){
             $serverExists = Server::where('id', $server['id'])->first();
