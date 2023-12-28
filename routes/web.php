@@ -27,4 +27,4 @@ Route::get('/auth/discord/callback',  [\App\Http\Controllers\DiscordAuthControll
 Route::get('/logout', function (){
     Auth::logout();
     return redirect('/');
-});
+})->name("logout");

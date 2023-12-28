@@ -40,8 +40,6 @@ class HandleInertiaRequests extends Middleware
             'user' => fn () => $request->user()
                 ? $request->user()->only('id', 'name', 'avatar')
                 : null,
-            'logged_in' => fn () => $request->user() !=null,
-            'route' => fn ()=>$request->route()->getName()
-        ]);
+            'logged_in' => fn () => $request->user() !=null]);
     }
 }

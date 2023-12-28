@@ -43,7 +43,7 @@ class UploadController extends Controller
                 $user->name = $request->user_name;
                 $user->avatar = $request->user_avatar;
                 $user->save();
-                $user->servers()->syncWithPivotValues($server->id,['is_owner'=>$user->id == $getServer['owner_id']]);
+                $user->servers()->syncWithoutDetaching([$server->id => ['is_owner' => $user->id == $getServer['owner_id']]]);
                 $upload = new Upload();
                 $upload->fileName = $request->file('file')->hashName();
                 $upload->save();

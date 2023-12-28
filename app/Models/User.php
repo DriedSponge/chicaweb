@@ -46,8 +46,9 @@ class User extends Authenticatable
     }
     public function allUploads()
     {
-        return Upload::whereHas('server', function ($query) {
-            $query->whereIn('id', $this->servers->pluck('id'));
+        $serverIds = $this->servers->pluck('id');
+        return Upload::whereHas('server', function ($query) use ($serverIds) {
+            $query->whereIn('id', $serverIds);
         });
     }
 }
