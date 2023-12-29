@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Upload extends Model
 {
     protected $table = 'uploads';
-
+    protected $hidden = ['server_id','user_id','id'];
     use HasFactory;
 
     public function server()

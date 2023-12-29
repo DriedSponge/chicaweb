@@ -15,6 +15,7 @@ class Server extends Model
     use HasFactory;
 
     protected $table = 'servers';
+    protected $hidden = ['id'];
     public function users()
     {
         return $this->hasMany(User::class,"server_id")->withPivot('is_owner');

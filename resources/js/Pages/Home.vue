@@ -60,7 +60,7 @@ defineOptions({ layout: Layout });
 							<li>
 								<a><i class="fa-solid fa-flag"></i> Report</a>
 							</li>
-							<li v-if="$page.props.user.id === upload.author.id">
+							<li v-if="upload.deleteable">
 								<a class="link-error"><i class="fa-solid fa-trash"></i> Delete</a>
 							</li>
 						</ul>
