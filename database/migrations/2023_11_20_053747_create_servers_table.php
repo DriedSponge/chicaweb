@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('did')->unique();
             $table->string('name');
             $table->string('server_icon')->nullable();
+            $table->foreignId('owner_id')->nullable();
+            $table->boolean("botIn")->default(true);
             $table->timestamps();
         });
     }

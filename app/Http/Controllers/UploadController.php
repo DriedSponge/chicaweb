@@ -21,17 +21,13 @@ class UploadController extends Controller
             // Create a sever if it does not exist
             $getServer = Http::withHeader("Authorization","Bot " . config("services.discord.bot_secret"))->acceptJson()->get("https://discord.com/api/v10/guilds/".$server_id);
             if($getServer->clientError() || $getServer->serverError()) {
-                return response(["error"=>"Error fetching Discord api data!"],500);
+                return response(["error"=>"Error fetching Discord api data! The bot might not be in the server."],500);
             }
-            $server = Server::where("did", $server_id)->first();
-            if (!$server) {
-                $server = new Server();
-                $server->id = $server_id;
-                $server->name=$getServer->json()["name"];
-                $server->server_icon = $getServer->json()['icon'];
-                $server->save();
-                return response(["Error fetching Discord api data!", 500]);
-            }
+            $server = Server::firstOrNew(['did'=>$server_id],['did'=>$server_id]);
+            $server->did = $server_id;
+            $server->name=$getServer->json()["name"];
+            $server->server_icon = $getServer->json()['icon'];
+            $server->save();
             $validator = Validator::make($request->all(),[
                 'user_id' => 'required|string',
                 'user_name' => 'string|required',
@@ -40,10 +36,14 @@ class UploadController extends Controller
             ]);
             if($validator->passes()){
                 $user = User::firstOrNew(['did'=>$request->user_id],['did'=>$request->user_id]);
+                $user->did = $request->user_id;
                 $user->name = $request->user_name;
                 $user->avatar = $request->user_avatar;
                 $user->save();
-                $user->servers()->syncWithoutDetaching([$server->id => ['is_owner' => $user->id == $getServer['owner_id']]]);
+                $user->servers()->syncWithoutDetaching($server->id);
+                if($user->did == $getServer['owner_id']){
+                    $server->owner()->associate($user)->save();
+                }
                 $upload = new Upload();
                 $upload->fileName = $request->file('file')->hashName();
                 $upload->save();

@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId("user_id")->nullable();
             $table->foreignId("server_id");
-            $table->boolean("is_owner")->default(false);
         });
     }
 

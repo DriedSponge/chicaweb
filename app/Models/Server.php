@@ -15,10 +15,15 @@ class Server extends Model
     use HasFactory;
 
     protected $table = 'servers';
-    protected $hidden = ['id'];
+    protected $hidden = ['id','owner'];
+    protected $fillable=['did','name','server_icon','botIn','owner'];
     public function users()
     {
-        return $this->hasMany(User::class,"server_id")->withPivot('is_owner');
+        return $this->hasMany(User::class,"server_id");
+    }
+    public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
     public function uploads(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

@@ -15,7 +15,7 @@ class HomeController extends Controller
         if(Auth::check()){
             $user= $request->user();
             $uploads = $request->user()->allUploads()->orderBy("created_at",'DESC')->with(['author','server'])->get();
-            $ownedServers = collect($user->servers()->wherePivot('is_owner',true)->get());
+            $ownedServers = collect($user->ownedServers()->get());
 
             $uploads->transform(function ($upload) use ($user,$ownedServers){
                 $upload->raw_url = \Storage::url("/uploads/".$upload->fileName);

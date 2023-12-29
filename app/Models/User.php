@@ -38,7 +38,10 @@ class User extends Authenticatable
 
     public function servers()
     {
-        return $this->belongsToMany(Server::class,"server_users","user_id","server_id")->withPivot('is_owner');
+        return $this->belongsToMany(Server::class,"server_users","user_id","server_id");
+    }
+    public function ownedServers(){
+        return $this->hasMany(Server::class,"owner_id");
     }
     public function uploads(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
