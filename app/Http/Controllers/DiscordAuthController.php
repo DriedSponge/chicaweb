@@ -14,7 +14,8 @@ class DiscordAuthController extends Controller
     public function auth()
     {
         $callbackUser = Socialite::driver('discord')->user();
-        $user = User::findOrNew($callbackUser->id);
+        $user = User::firstOrNew(['did'=>$callbackUser->id],['did'=>$callbackUser->id]);
+        $user->did = $callbackUser->id;
         $user->discord_token = $callbackUser->token;
         $user->name = $callbackUser->name;
         $user->avatar = $callbackUser->avatar;
@@ -22,7 +23,7 @@ class DiscordAuthController extends Controller
         Auth::login($user);
         $servers = Http::withToken($user->discord_token)->acceptJson()->get("https://discord.com/api/v10/users/@me/guilds")->json();
         collect($servers)->map(function ($server) use ($user){
-            $serverExists = Server::where('id', $server['id'])->first();
+            $serverExists = Server::where('did', $server['id'])->first();
                 if($serverExists){
                     $serverExists->name = $server['name'];
                     $serverExists->server_icon = $server['icon'];
@@ -35,7 +36,7 @@ class DiscordAuthController extends Controller
                     $inServer = Http::withHeader("Authorization","Bot " . config("services.discord.bot_secret"))->acceptJson()->get("https://discord.com/api/v10/guilds/".$server['id']."/members/".config("services.discord.bot_userid"));
                     if(!$inServer->clientError()){
                         $newServer = new Server();
-                        $newServer->id = $server['id'];
+                        $newServer->did = $server['id'];
                         $newServer->name = $server['name'];
                         $newServer->server_icon = $server['icon'];
                         $newServer->save();

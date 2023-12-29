@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->string('id')->unique()->primary();
+            $table->id();
+            $table->string('did')->unique();
             $table->string('name');
             $table->string("avatar")->nullable();
             $table->string("discord_token")->nullable();
+            $table->boolean("admin")->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

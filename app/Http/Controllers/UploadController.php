@@ -23,7 +23,7 @@ class UploadController extends Controller
             if($getServer->clientError() || $getServer->serverError()) {
                 return response(["error"=>"Error fetching Discord api data!"],500);
             }
-            $server = Server::where("id", $server_id)->first();
+            $server = Server::where("did", $server_id)->first();
             if (!$server) {
                 $server = new Server();
                 $server->id = $server_id;
@@ -39,7 +39,7 @@ class UploadController extends Controller
                 'file' => ['required', File::types(["image/jpg", "image/jpeg", "image/png", "image/gif"])->max("100mb")]
             ]);
             if($validator->passes()){
-                $user = User::firstOrNew(['id'=>$request->user_id],['id'=>$request->user_id]);
+                $user = User::firstOrNew(['did'=>$request->user_id],['did'=>$request->user_id]);
                 $user->name = $request->user_name;
                 $user->avatar = $request->user_avatar;
                 $user->save();

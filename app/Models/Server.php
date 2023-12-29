@@ -13,7 +13,6 @@ use Illuminate\Database\Query\Builder;
 class Server extends Model
 {
     use HasFactory;
-    protected $keyType = 'string';
 
     protected $table = 'servers';
     public function users()

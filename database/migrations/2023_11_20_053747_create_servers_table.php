@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('servers', function (Blueprint $table) {
-            $table->string('id')->unique()->primary();
+            $table->id();
+            $table->string('did')->unique();
             $table->string('name');
             $table->string('server_icon')->nullable();
             $table->timestamps();

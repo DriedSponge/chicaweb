@@ -21,7 +21,7 @@ defineOptions({ layout: Layout });
 					v-if="server.server_icon != null"
 					class="h-24 w-24 rounded-full object-fill shadow-xl"
 					:alt="`The icon for ${server.name}`"
-					:src="`https://cdn.discordapp.com/icons/${server.id}/${server['server_icon']}.webp?size=240`"
+					:src="`https://cdn.discordapp.com/icons/${server.did}/${server['server_icon']}.webp?size=240`"
 				/>
 				<div
 					v-else
