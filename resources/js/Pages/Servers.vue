@@ -11,7 +11,7 @@ defineOptions({ layout: Layout });
 	<Head>
 		<title>My Servers</title>
 	</Head>
-	<div class="flex flex-col space-y-3">
+	<div>
 		<div class="grid grid-cols-2 gap-4">
 			<div
 				v-for="server in servers"
