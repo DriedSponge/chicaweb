@@ -16,6 +16,7 @@ use Laravel\Socialite\Facades\Socialite;
 
 Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name("home");
 Route::get('/servers', [\App\Http\Controllers\BrowseController::class, 'servers'])->middleware(\App\Http\Middleware\Authenticate::class)->name("servers");
+Route::get('/servers/{server_id}', [\App\Http\Controllers\ServerController::class, 'view'])->middleware(\App\Http\Middleware\Authenticate::class)->name("server");
 
 
 // Auth

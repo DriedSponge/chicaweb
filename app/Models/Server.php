@@ -19,7 +19,7 @@ class Server extends Model
     protected $fillable=['did','name','server_icon','botIn','owner'];
     public function users()
     {
-        return $this->hasMany(User::class,"server_id");
+        return $this->belongsToMany(User::class,"server_users","server_id");
     }
     public function owner(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
