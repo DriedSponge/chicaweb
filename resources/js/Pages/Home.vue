@@ -3,7 +3,7 @@ import Layout from "./Layout.vue";
 import { Head, Link } from "@inertiajs/vue3";
 defineProps({
 	user: Object,
-	uploads: Object,
+	uploads: Array,
 	logged_in: Boolean
 });
 defineOptions({ layout: Layout });
@@ -18,6 +18,13 @@ defineOptions({ layout: Layout });
 		class="flex w-full flex-col justify-center space-y-5"
 	>
 		<div
+			v-if="uploads.length === 0"
+			class="rounded-lg bg-base-300 shadow-xl"
+		>
+			<h1 class="m-8 text-center text-2xl">There is no content to show you right now!</h1>
+		</div>
+		<div
+			v-else
 			v-for="upload in uploads"
 			class="rounded-lg bg-base-300 shadow-xl"
 		>
