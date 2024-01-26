@@ -42,7 +42,7 @@ defineOptions({ layout: Layout });
 					<span>{{ upload.server.name.charAt(0) }}</span>
 				</span>
 				<p class="flex-1">
-					{{ upload.server.name }}
+					<Link :href="route('server', upload.server.did)">{{ upload.server.name }}</Link>
 					<span class="text-gray-600">
 						&bull; Created by {{ upload.author.name }} {{ upload.created_at_distance }}</span
 					>
