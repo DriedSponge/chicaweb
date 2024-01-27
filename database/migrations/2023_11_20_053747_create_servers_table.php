@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('did')->unique();
             $table->string('name');
             $table->string('server_icon')->nullable();
+            $table->boolean('private')->default(false);
             $table->foreignId('owner_id')->nullable();
+            $table->foreignId('suspension_id')->nullable();
             $table->boolean("botIn")->default(true);
             $table->timestamps();
         });

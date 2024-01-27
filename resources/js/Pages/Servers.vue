@@ -1,6 +1,6 @@
 <script setup>
 import Layout from "./Layout.vue";
-import { Head, Link } from "@inertiajs/vue3";
+import { Head } from "@inertiajs/vue3";
 import { router } from "@inertiajs/vue3";
 defineProps({
 	servers: Object

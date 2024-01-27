@@ -54,4 +54,12 @@ class User extends Authenticatable
             $query->whereIn('id', $serverIds);
         });
     }
+    public function suspension(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Suspension::class);
+    }
+    public function suspended(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Suspension::class,"admin_id");
+    }
 }

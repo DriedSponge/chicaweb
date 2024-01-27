@@ -80,6 +80,7 @@ defineOptions({ layout: Layout });
 				<img
 					:src="upload.raw_url"
 					class="object-cove rounded-lg"
+					alt="The post"
 				/>
 			</div>
 		</div>
