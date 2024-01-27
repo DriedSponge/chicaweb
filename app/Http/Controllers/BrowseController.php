@@ -12,7 +12,7 @@ class BrowseController extends Controller
     {
         if(Auth::check()){
             //dd($request->user()->servers()->get());
-            return Inertia::render('Servers', ['servers'=>$request->user()->servers()->get()]);
+            return Inertia::render('Servers', ['servers'=>$request->user()->servers()->where("suspension_id",null)->get()]);
         }else{
             return redirect("/");
         }
