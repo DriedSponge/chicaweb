@@ -52,6 +52,10 @@ class User extends Authenticatable
         $serverIds = $this->servers->pluck('id');
         return Upload::whereHas('server', function ($query) use ($serverIds) {
             $query->whereIn('id', $serverIds);
+        })->whereDoesntHave('author.suspension',function ($query){
+            $query->where('active',true);
+        })->whereDoesntHave('server.suspension',function($query){
+            $query->where('active',true);
         });
     }
     public function suspension(): \Illuminate\Database\Eloquent\Relations\hasMany
