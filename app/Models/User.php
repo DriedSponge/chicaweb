@@ -47,16 +47,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(Upload::class, "user_id");
     }
-    public function allUploads()
+    public function allUploads(): \Illuminate\Database\Eloquent\Builder|Upload
     {
         $serverIds = $this->servers->pluck('id');
         return Upload::whereHas('server', function ($query) use ($serverIds) {
-            $query->where('suspension_id',null)->whereIn('id', $serverIds);
+            $query->whereNull('suspension_id')->whereIn('id', $serverIds);
+        })->whereHas('author', function ($query) {
+            $query->whereNull('suspension_id');
         });
     }
-    public function suspension(): \Illuminate\Database\Eloquent\Relations\HasOne
+    public function suspension(): \Illuminate\Database\Eloquent\Relations\belongsTo
     {
-        return $this->hasOne(Suspension::class);
+        return $this->belongsTo(Suspension::class);
     }
     public function suspended(): \Illuminate\Database\Eloquent\Relations\HasMany
     {

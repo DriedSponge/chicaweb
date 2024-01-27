@@ -15,5 +15,9 @@ class Suspension extends Model
     {
         return $this->hasOne(Server::class);
     }
+    public function user(): \Illuminate\Database\Eloquent\Relations\hasOne
+    {
+        return $this->hasOne(User::class);
+    }
 
 }
