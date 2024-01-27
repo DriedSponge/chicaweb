@@ -11,13 +11,13 @@ class Suspension extends Model
     use HasFactory;
     use SoftDeletes;
     protected $table = 'suspensions';
-    public function server(): \Illuminate\Database\Eloquent\Relations\hasOne
+    public function server(): \Illuminate\Database\Eloquent\Relations\belongsTo
     {
-        return $this->hasOne(Server::class);
+        return $this->belongsTo(Server::class,"server_id","did");
     }
-    public function user(): \Illuminate\Database\Eloquent\Relations\hasOne
+    public function user(): \Illuminate\Database\Eloquent\Relations\belongsTo
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class,"user_id","did");
     }
 
 }

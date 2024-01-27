@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string("avatar")->nullable();
             $table->string("discord_token")->nullable();
             $table->boolean("admin")->default(false);
-            $table->foreignId("suspension_id")->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

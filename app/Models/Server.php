@@ -29,8 +29,8 @@ class Server extends Model
     {
         return $this->hasMany(Upload::class, "server_id")->with("author");
     }
-    public function suspension(): \Illuminate\Database\Eloquent\Relations\belongsTo
+    public function suspension(): \Illuminate\Database\Eloquent\Relations\hasMany
     {
-        return $this->belongsTo(Suspension::class);
+        return $this->hasMany(Suspension::class,"server_id","did");
     }
 }

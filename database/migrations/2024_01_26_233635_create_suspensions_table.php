@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string("reason")->default("Terms Violation");
             $table->foreignId("admin_id");
+            $table->string("server_id")->nullable();
+            $table->string("user_id")->nullable();
+            $table->boolean("active")->default(true);
             $table->softDeletes();
             $table->timestamp("expires")->nullable();
             $table->timestamps();

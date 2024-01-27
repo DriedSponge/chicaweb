@@ -51,17 +51,11 @@ class User extends Authenticatable
     {
         $serverIds = $this->servers->pluck('id');
         return Upload::whereHas('server', function ($query) use ($serverIds) {
-            $query->whereNull('suspension_id')->whereIn('id', $serverIds);
-        })->whereHas('author', function ($query) {
-            $query->whereNull('suspension_id');
+            $query->whereIn('id', $serverIds);
         });
     }
-    public function suspension(): \Illuminate\Database\Eloquent\Relations\belongsTo
+    public function suspension(): \Illuminate\Database\Eloquent\Relations\hasMany
     {
-        return $this->belongsTo(Suspension::class);
-    }
-    public function suspended(): \Illuminate\Database\Eloquent\Relations\HasMany
-    {
-        return $this->hasMany(Suspension::class,"admin_id");
+        return $this->hasMany(Suspension::class,"user_id","did");
     }
 }
