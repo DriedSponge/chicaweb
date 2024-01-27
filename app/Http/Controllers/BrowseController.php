@@ -12,11 +12,9 @@ class BrowseController extends Controller
     public function servers(Request $request)
     {
         if(Auth::check()){
-            $servers = $request->user()->servers()->with(['suspension'=>function ($query) {
-                $query->where('active','true');
-            }])->get()->reject(function (Server $server) {
-                return $server->suspension->isNotEmpty();
-            });
+            $servers = $request->user()->servers()->whereDoesntHave('suspension', function ($query){
+                $query->where('active',true);
+            })->get();
             return Inertia::render('Servers', ['servers'=>$servers]);
         }else{
             return redirect("/");
