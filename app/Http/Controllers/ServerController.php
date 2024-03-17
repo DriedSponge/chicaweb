@@ -16,9 +16,14 @@ class ServerController extends Controller
         $user = $request->user();
         $server = Server::firstWhere("did",$server_id);
         if($server){
-            $canLeave = $server->users()->where("user_id", $user->id)->exists();
-            $own = $server->owner()->exists() && $server->owner()->first()->id == $user->id;
-            $canEdit=$user->admin || $own;
+            $canLeave = false;
+            $own=false;
+            $canEdit = false;
+            if($user){
+                $canLeave = $server->users()->where("user_id", $user->id)->exists();
+                $own = $server->owner()->exists() && $server->owner()->first()->id == $user->id;
+                $canEdit=$user->admin || $own;
+            }
             return Inertia::render("Server",["server"=>$server,'joined'=>$canLeave,'canEdit'=>$canEdit]);
         }else {
             return response("Not found",404);

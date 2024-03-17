@@ -6,6 +6,7 @@ use App\Models\Server;
 use App\Models\Upload;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class PostController extends Controller
@@ -18,7 +19,7 @@ class PostController extends Controller
             $server = $upload->server;
 
             // Always show site admin post
-            if($user->admin){
+            if(Auth::check() && $user->admin){
                 return response("show, you are admin, show regardless", 200);
             }
 
@@ -28,13 +29,13 @@ class PostController extends Controller
             }
 
             // If the server is private and not suspended, show to members
-            if($server->private && !$server->isSuspended() && $user->servers->contains($server)){
+            if($server->private && !$server->isSuspended() && Auth::check() && $user->servers->contains($server)){
                 return response("show to members",200);
             }
 
-            return response("Not found",404);
+            return response("Not found private",404);
         }catch (ModelNotFoundException){
-            return response("Not found",404);
+            return response("Not found real",404);
         }
     }
 }
