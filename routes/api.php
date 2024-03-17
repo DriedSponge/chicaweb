@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AppInteractionKey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,4 +19,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/{server_id}/upload', [\App\Http\Controllers\UploadController::class, "upload"]);
+Route::post('/{server_id}/upload', [\App\Http\Controllers\UploadController::class, "upload"])->middleware(AppInteractionKey::class);

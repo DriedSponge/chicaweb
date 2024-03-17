@@ -16,8 +16,6 @@ class UploadController extends Controller
 {
     public function upload(Request $request, string $server_id)
     {
-        if ($request->bearerToken() == config("app.interaction_key")) {
-
             // Create a sever if it does not exist
             $getServer = Http::withHeader("Authorization","Bot " . config("services.discord.bot_secret"))->acceptJson()->get("https://discord.com/api/v10/guilds/".$server_id);
             if($getServer->clientError() || $getServer->serverError()) {
@@ -54,8 +52,5 @@ class UploadController extends Controller
             }else{
                 return response($validator->errors(),400);
             }
-        } else {
-            return response(["error" => "Invalid Interaction Key!"], 401);
-        }
     }
 }
