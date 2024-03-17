@@ -16,15 +16,29 @@ class ServerController extends Controller
         $user = $request->user();
         $server = Server::firstWhere("did",$server_id);
         if($server){
-            $canLeave = false;
-            $own=false;
-            $canEdit = false;
-            if($user){
-                $canLeave = $server->users()->where("user_id", $user->id)->exists();
-                $own = $server->owner()->exists() && $server->owner()->first()->id == $user->id;
-                $canEdit=$user->admin || $own;
+
+            $server->totalPosts = $server->uploads()->count();
+            $server->totalUsers = $server->users()->count();
+            if($server->isSuspended()){
+                return response("Not found",404);
             }
-            return Inertia::render("Server",["server"=>$server,'joined'=>$canLeave,'canEdit'=>$canEdit]);
+
+
+
+            if($server->private){
+                if(!\Auth::check()){
+                    return redirect()->route("loginPage");
+                }else if($user->servers->contains($server)){
+                    return Inertia::render("Server",["server"=>$server]);
+                }else{
+                    return response("Not found",404);
+                }
+            }
+
+            // http://localhost/servers/343920171100012558
+
+
+            return Inertia::render("Server",["server"=>$server]);
         }else {
             return response("Not found",404);
         }

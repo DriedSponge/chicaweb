@@ -14,8 +14,11 @@ class Server extends Model
 {
     use HasFactory;
 
+    /**
+     * @var int|mixed
+     */
     protected $table = 'servers';
-    protected $hidden = ['id','owner'];
+    protected $hidden = ['id','owner_id','botIn'];
     protected $fillable=['did','name','server_icon','botIn','owner','private'];
     public function users()
     {
