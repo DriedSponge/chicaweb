@@ -30,9 +30,9 @@ class SetAdmin extends Command
         $discordID =  $this->argument("discordID");
         try{
             $user = User::where(['did'=>$discordID])->firstOrFail();
-            if ($this->hasOption("revoke")){
+
+            if ($this->option("revoke")){
                 $user->admin = false;
-                echo $user->admin ;
                 $user->save();
                 $this->info("User ".$user->name." (".$user->did.") has had their admin access revoked.");
             }else if($user->admin){

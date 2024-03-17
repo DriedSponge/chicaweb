@@ -16,7 +16,7 @@ class Server extends Model
 
     protected $table = 'servers';
     protected $hidden = ['id','owner'];
-    protected $fillable=['did','name','server_icon','botIn','owner'];
+    protected $fillable=['did','name','server_icon','botIn','owner','private'];
     public function users()
     {
         return $this->belongsToMany(User::class,"server_users","server_id");
@@ -32,5 +32,9 @@ class Server extends Model
     public function suspension(): \Illuminate\Database\Eloquent\Relations\hasMany
     {
         return $this->hasMany(Suspension::class,"server_id","did");
+    }
+    public function isSuspended():bool
+    {
+        return $this->suspension()->where("active",true)->exists();
     }
 }

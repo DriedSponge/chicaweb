@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\Authenticate;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
@@ -15,9 +16,10 @@ use Laravel\Socialite\Facades\Socialite;
 */
 
 Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name("home");
-Route::get('/servers', [\App\Http\Controllers\BrowseController::class, 'servers'])->middleware(\App\Http\Middleware\Authenticate::class)->name("servers");
-Route::get('/servers/{server_id}', [\App\Http\Controllers\ServerController::class, 'view'])->middleware(\App\Http\Middleware\Authenticate::class)->name("server");
+Route::get('/servers', [\App\Http\Controllers\BrowseController::class, 'servers'])->middleware(Authenticate::class)->name("servers");
+Route::get('/servers/{server_id}', [\App\Http\Controllers\ServerController::class, 'view'])->middleware(Authenticate::class)->name("server");
 
+Route::get("/servers/{server_id}/posts/{post_id}", [\App\Http\Controllers\PostController::class, 'view']);
 
 // Auth
 Route::get("/auth/discord", function (){
