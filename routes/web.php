@@ -15,20 +15,32 @@ use Laravel\Socialite\Facades\Socialite;
 |
 */
 
-Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->middleware(Authenticate::class)->name("home");
-Route::get('/servers', [\App\Http\Controllers\BrowseController::class, 'servers'])->middleware(Authenticate::class)->name("servers");
 
+
+Route::middleware(Authenticate::class)->group(function (){
+    Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name("home");
+    Route::get('/servers', [\App\Http\Controllers\BrowseController::class, 'servers'])->name("servers");
+});
+
+
+//Servers
 Route::get('/servers/{server_id}', [\App\Http\Controllers\ServerController::class, 'view'])->name("server");
 
 
+Route::middleware(\App\Http\Middleware\ServerManager::class)->group(function (){
+    Route::get('/servers/{server_id}/settings', [\App\Http\Controllers\ServerController::class, 'serverSettings'])->name("server.settings");
+    Route::put('/servers/{server_id}/settings', [\App\Http\Controllers\ServerController::class, 'saveSettings'])->name("server.settings.save");
+
+});
+
 Route::get("/servers/{server_id}/posts/{post_id}", [\App\Http\Controllers\PostController::class, 'view'])->name("post");
+
+
 
 // Auth
 Route::get("/auth/discord", function (){
     return Socialite::driver('discord')->setScopes(['identify','guilds'])->redirect();
 })->name('login');
-
-
 Route::get('/login',function (){
     return Inertia::render('Login');
 })->name("loginPage");

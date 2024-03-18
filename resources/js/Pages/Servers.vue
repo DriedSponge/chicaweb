@@ -32,7 +32,13 @@ defineOptions({ layout: Layout });
 					<span>{{ server.name.charAt(0) }}</span>
 				</div>
 			</div>
-			<p class="flex-1 text-center text-xl font-extrabold">{{ server.name }}</p>
+			<p class="flex-1 space-x-2 text-center text-xl">
+				<span class="font-extrabold">{{ server.name }}</span>
+				<i
+					v-if="server.private"
+					class="fa-solid fa-lock"
+				></i>
+			</p>
 		</div>
 	</div>
 </template>

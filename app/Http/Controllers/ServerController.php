@@ -6,6 +6,7 @@ use App\Models\Server;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Ramsey\Uuid\Type\Integer;
+use stdClass;
 use function Laravel\Prompts\error;
 use function Termwind\render;
 
@@ -14,22 +15,31 @@ class ServerController extends Controller
     public function view(Request $request, $server_id)
     {
         $user = $request->user();
-        $server = Server::firstWhere("did",$server_id);
+        $server = Server::where("did",$server_id)->with("owner")->first();
         if($server){
-
-            $server->totalPosts = $server->uploads()->count();
-            $server->totalUsers = $server->users()->count();
-            if($server->isSuspended()){
+            if($server->isSuspended() && (Auth::check() && !$user->admin)){
                 return response("Not found",404);
             }
 
+            $server->totalPosts = $server->uploads()->count();
+            $server->totalUsers = $server->users()->count();
 
+            $userPerms = new stdClass();
+            if(\Auth::check()){
+                $userPerms->canLeave= $server->owner?->id != $user->id && $user->servers()->where("did",$server_id)->exists();
+                $userPerms->canEdit = $server->owner?->id == $user->id || $user->admin;
+            }else{
+                $userPerms->canLeave=false;
+                $userPerms->canEdit=false;
+            }
+
+            $server->makeHidden("owner");
 
             if($server->private){
                 if(!\Auth::check()){
                     return redirect()->route("loginPage");
                 }else if($user->servers->contains($server)){
-                    return Inertia::render("Server",["server"=>$server]);
+                    return Inertia::render("Server",["server"=>$server,"perms"=>$userPerms]);
                 }else{
                     return response("Not found",404);
                 }
@@ -38,11 +48,29 @@ class ServerController extends Controller
             // http://localhost/servers/343920171100012558
 
 
-            return Inertia::render("Server",["server"=>$server]);
+            return Inertia::render("Server",["server"=>$server,"perms"=>$userPerms]);
         }else {
             return response("Not found",404);
         }
     }
+    public function serverSettings(Request $request,$server_id){
+        $server = Server::where("did",$server_id)->first();
+        if(!$server){
+            return response(404,404);
+        }
+        return Inertia::render("ServerSettings",["server"=>$server]);
 
+    }
+    public function saveSettings(Request $request,$server_id){
+        $server = Server::where("did",$server_id)->first();
+        if(!$server){
+            return response(404,404);
+        }
+        $request->validate(["private"=>"required|boolean"]);
+        $server->private=$request->private;
+        $server->save();
+        return redirect(route("server.settings",["server_id"=>$server_id]));
+
+    }
 
 }
