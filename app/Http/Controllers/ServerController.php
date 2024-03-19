@@ -64,10 +64,10 @@ class ServerController extends Controller
 
     }
     public function saveSettings(SaveServerSettingsRequest $request,$server_id){
-        $server = Server::where("did",$server_id)->first();
-        UpdatePrivacy::dispatch($server);
+        $server = $request["server"];
         $server->private=$request->validated()["private"];
         $server->save();
+        UpdatePrivacy::dispatch($server);
         return redirect(route("server.settings",["server_id"=>$server_id]));
     }
 

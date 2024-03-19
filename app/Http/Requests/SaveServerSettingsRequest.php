@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Models\Server;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Request;
 
@@ -12,7 +13,9 @@ class SaveServerSettingsRequest extends FormRequest
      */
     public function authorize(Request $request): bool
     {
-        if(\Auth::user()->admin || \Auth::user()->ownedServers()->where("did",$request->server_id)->exists()){
+        $server = Server::where("did",$request->server_id)->first();
+        if(\Auth::user()->admin && $server || $server->owner_id == \Auth::user()->id){
+            $request->merge(["server"=> $server]);
             return true;
         }
         return false;
