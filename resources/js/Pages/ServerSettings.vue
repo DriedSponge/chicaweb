@@ -3,6 +3,7 @@ import Layout from "./Layout.vue";
 import { Head } from "@inertiajs/vue3";
 import { usePage } from "@inertiajs/vue3";
 import { useForm } from "laravel-precognition-vue-inertia";
+import { ref } from "vue";
 defineProps({
 	server: Object
 });
@@ -14,9 +15,17 @@ const form = useForm(
 		private: usePage().props.server.private
 	}
 );
+const deleteForm = useForm(
+	"delete",
+	route("server.delete", { server_id: usePage().props.server.did }),
+	{
+		server_name: null
+	}
+);
 function submit() {
 	form.submit();
 }
+let deleteModal = ref(null);
 </script>
 
 <template>
@@ -50,15 +59,13 @@ function submit() {
 			</div>
 			<form
 				class="w-full space-y-3"
-				@submit.prevent="
-					form.put(route('server.settings.save', { server_id: usePage().props.server.did }))
-				"
+				@submit.prevent="form.submit()"
 			>
 				<div class="form-control">
 					<label class="label cursor-pointer">
 						<span class="label-text font-extrabold"
 							>Private Server - If this is enabled, only members of your discord server can see
-							post.</span
+							posts.</span
 						>
 						<input
 							type="checkbox"
@@ -94,13 +101,78 @@ function submit() {
 					<button
 						class="btn btn-error btn-sm"
 						type="button"
+						@click="deleteModal.showModal()"
 					>
-						Delete Server
+						<i class="fa-solid fa-trash"></i> Delete Server
 					</button>
 				</div>
 			</form>
 		</div>
 	</div>
-	{{ server }}
+	<dialog
+		ref="deleteModal"
+		class="modal"
+	>
+		<div class="modal-box space-y-3 bg-base-300">
+			<h2 class="text-xl">
+				Delete <span class="font-bold">{{ server.name }}?</span>
+			</h2>
+			<p class="py-4 font-bold">
+				Are you sure you want to delete this server? Please note the following:
+			</p>
+			<ol class="list-inside list-decimal space-y-2">
+				<li>
+					All posts associated with the server will be
+					<span class="font-bold">permanently deleted.</span> We delete all data instantly, it is
+					impossible to recover.
+				</li>
+				<li>The discord bot will automatically leave the server.</li>
+				<li>The server will be recreated if the bot is used again in the discord server.</li>
+			</ol>
+			<form @submit.prevent="deleteForm.submit()">
+				<label class="form-control w-full">
+					<div class="label">
+						<span class="label-text">Please type "{{ server.name }}" to confirm.</span>
+					</div>
+					<input
+						type="text"
+						placeholder="Type here"
+						class="input input-bordered w-full"
+						:class="{ 'input-error': deleteForm.errors.server_name }"
+						v-model="deleteForm.server_name"
+						@change="deleteForm.validate('server_name')"
+					/>
+					<div
+						class="label"
+						v-show="deleteForm.errors.server_name"
+					>
+						<span class="label-text-alt text-red-500">{{ deleteForm.errors.server_name }}</span>
+					</div>
+				</label>
+				<div class="modal-action">
+					<form method="dialog">
+						<button
+							@click="
+								() => {
+									deleteForm.reset();
+									deleteForm.forgetError('server_name');
+								}
+							"
+							class="btn btn-neutral"
+						>
+							Cancel
+						</button>
+					</form>
+					<button
+						:disabled="!deleteForm.isDirty || deleteForm.hasErrors"
+						class="btn btn-error"
+						type="submit"
+					>
+						<i class="fa-solid fa-trash"></i> Delete
+					</button>
+				</div>
+			</form>
+		</div>
+	</dialog>
 </template>
 <style lang="postcss"></style>

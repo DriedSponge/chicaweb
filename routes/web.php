@@ -28,6 +28,7 @@ Route::middleware(Authenticate::class)->group(function (){
         Route::get('/servers/{server_id}/settings', [\App\Http\Controllers\ServerController::class, 'serverSettings'])->name("server.settings");
     });
     Route::put('/servers/{server_id}/settings', [\App\Http\Controllers\ServerController::class, 'saveSettings'])->middleware([HandlePrecognitiveRequests::class])->name("server.settings.save");
+    Route::delete('/servers/{server_id}', [\App\Http\Controllers\ServerController::class, 'deleteServer'])->middleware([HandlePrecognitiveRequests::class])->name("server.delete");
 
 
 

@@ -24,18 +24,26 @@ class Upload extends Model
         if(!$private){
             \Cache::forget($this->fileName."tempURL");
         }
-        \Storage::setVisibility("uploads/".$this->fileName,$private ? "private" : "public");
+        \Storage::setVisibility($this->path(),$private ? "private" : "public");
     }
 
-    public function generateTempURL()
+    public function generateTempURL(): string
     {
         $url = Cache::get($this->fileName."tempURL");
         if(!$url){
             $expires=now()->addMinutes(5);
-            $url = \Storage::temporaryUrl("/uploads/".$this->fileName,$expires);
+            $url = \Storage::temporaryUrl($this->path(),$expires);
             Cache::put($this->fileName."tempURL",$url,$expires);
         }
         return $url;
+    }
 
+    public function path():string
+    {
+        return "/uploads/".$this->server_id."/".$this->fileName;
+    }
+    public function directory():string
+    {
+        return "/uploads/".$this->server_id."/";
     }
 }

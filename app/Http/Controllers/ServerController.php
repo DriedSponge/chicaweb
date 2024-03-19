@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeleteServerRequest;
 use App\Http\Requests\SaveServerSettingsRequest;
 use App\Jobs\UpdatePrivacy;
 use App\Models\Server;
@@ -69,6 +70,11 @@ class ServerController extends Controller
         $server->save();
         UpdatePrivacy::dispatch($server);
         return redirect(route("server.settings",["server_id"=>$server_id]));
+    }
+    public function deleteServer(DeleteServerRequest $request)
+    {
+        $request["server"]->delete();
+        return redirect(route("home"));
     }
 
 }

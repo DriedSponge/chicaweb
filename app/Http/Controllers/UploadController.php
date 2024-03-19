@@ -47,8 +47,12 @@ class UploadController extends Controller
                 $upload->save();
                 $server->uploads()->save($upload);
                 $user->uploads()->save($upload);
-                $request->file('file')->storePublicly('uploads');
-                return response(['directUrl'=>'test',"rawUrl"=>\Storage::url('uploads/'.$request->file('file')->hashName())],201);
+                if($server->private){
+                    $request->file('file')->store($upload->directory());
+                }else{
+                    $request->file('file')->storePublicly($upload->directory());
+                }
+                return response(['directUrl'=>'test',"rawUrl"=>\Storage::url($upload->path())],201);
             }else{
                 return response($validator->errors(),400);
             }

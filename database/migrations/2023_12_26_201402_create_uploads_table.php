@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string("fileName")->unique();
             $table->string("context")->nullable();
-            $table->foreignId("server_id")->nullable();
+            $table->foreignId("server_id");
             $table->foreignId("user_id")->nullable();
             $table->timestamps();
         });

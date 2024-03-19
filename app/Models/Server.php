@@ -12,7 +12,6 @@ use Illuminate\Database\Query\Builder;
  */
 class Server extends Model
 {
-    use HasFactory;
 
     /**
      * @var int|mixed
@@ -36,8 +35,18 @@ class Server extends Model
     {
         return $this->hasMany(Suspension::class,"server_id","did");
     }
+    /*
+     * Check if a server is suspended.
+     */
     public function isSuspended():bool
     {
         return $this->suspension()->where("active",true)->exists();
+    }
+    protected static function booted(): void
+    {
+        static::deleting(function (Server $server) {
+            \Storage::deleteDirectory("/uploads/".$server->id);
+            $server->uploads()->delete();
+        });
     }
 }
