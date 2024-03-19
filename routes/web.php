@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\Authenticate;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Socialite\Facades\Socialite;
@@ -18,8 +19,20 @@ use Laravel\Socialite\Facades\Socialite;
 
 
 Route::middleware(Authenticate::class)->group(function (){
+    // Basic viewing
     Route::get('/', [\App\Http\Controllers\HomeController::class, 'index'])->name("home");
     Route::get('/servers', [\App\Http\Controllers\BrowseController::class, 'servers'])->name("servers");
+
+    // Server Settings
+    Route::middleware(\App\Http\Middleware\ServerManager::class)->group(function (){
+        Route::get('/servers/{server_id}/settings', [\App\Http\Controllers\ServerController::class, 'serverSettings'])->name("server.settings");
+    });
+    Route::put('/servers/{server_id}/settings', [\App\Http\Controllers\ServerController::class, 'saveSettings'])->middleware([HandlePrecognitiveRequests::class])->name("server.settings.save");
+
+
+
+    Route::get("/servers/{server_id}/posts/{post_id}", [\App\Http\Controllers\PostController::class, 'view'])->name("post");
+
 });
 
 
@@ -27,13 +40,6 @@ Route::middleware(Authenticate::class)->group(function (){
 Route::get('/servers/{server_id}', [\App\Http\Controllers\ServerController::class, 'view'])->name("server");
 
 
-Route::middleware(\App\Http\Middleware\ServerManager::class)->group(function (){
-    Route::get('/servers/{server_id}/settings', [\App\Http\Controllers\ServerController::class, 'serverSettings'])->name("server.settings");
-    Route::put('/servers/{server_id}/settings', [\App\Http\Controllers\ServerController::class, 'saveSettings'])->name("server.settings.save");
-
-});
-
-Route::get("/servers/{server_id}/posts/{post_id}", [\App\Http\Controllers\PostController::class, 'view'])->name("post");
 
 
 

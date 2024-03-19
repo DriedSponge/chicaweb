@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\SaveServerSettingsRequest;
+use App\Jobs\UpdatePrivacy;
 use App\Models\Server;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -17,7 +19,7 @@ class ServerController extends Controller
         $user = $request->user();
         $server = Server::where("did",$server_id)->with("owner")->first();
         if($server){
-            if($server->isSuspended() && (Auth::check() && !$user->admin)){
+            if($server->isSuspended() && (\Auth::check() && !$user->admin)){
                 return response("Not found",404);
             }
 
@@ -61,16 +63,12 @@ class ServerController extends Controller
         return Inertia::render("ServerSettings",["server"=>$server]);
 
     }
-    public function saveSettings(Request $request,$server_id){
+    public function saveSettings(SaveServerSettingsRequest $request,$server_id){
         $server = Server::where("did",$server_id)->first();
-        if(!$server){
-            return response(404,404);
-        }
-        $request->validate(["private"=>"required|boolean"]);
-        $server->private=$request->private;
+        UpdatePrivacy::dispatch($server);
+        $server->private=$request->validated()["private"];
         $server->save();
         return redirect(route("server.settings",["server_id"=>$server_id]));
-
     }
 
 }

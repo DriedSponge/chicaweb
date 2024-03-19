@@ -1,17 +1,21 @@
 <script setup>
 import Layout from "./Layout.vue";
-import { Head, Link, router } from "@inertiajs/vue3";
-import { useForm, usePage } from "@inertiajs/vue3";
-import { onMounted } from "vue";
+import { Head } from "@inertiajs/vue3";
+import { usePage } from "@inertiajs/vue3";
+import { useForm } from "laravel-precognition-vue-inertia";
 defineProps({
 	server: Object
 });
 defineOptions({ layout: Layout });
-const form = useForm({
-	private: usePage().props.server.private
-});
+const form = useForm(
+	"put",
+	route("server.settings.save", { server_id: usePage().props.server.did }),
+	{
+		private: usePage().props.server.private
+	}
+);
 function submit() {
-	router.put(route("server.settings.save", { server_id: usePage().props.server.did }), form);
+	form.submit();
 }
 </script>
 
@@ -50,32 +54,16 @@ function submit() {
 					form.put(route('server.settings.save', { server_id: usePage().props.server.did }))
 				"
 			>
-				<label class="form-control w-full">
-					<div class="label">
-						<span class="label-text">Server Name</span>
-					</div>
-					<input
-						type="text"
-						:placeholder="server.name"
-						:value="server.name"
-						class="input input-bordered w-full"
-						disabled
-					/>
-					<div class="label">
-						<span class="label-text-alt"
-							>This value is updated automatically to match discord.</span
-						>
-					</div>
-				</label>
 				<div class="form-control">
 					<label class="label cursor-pointer">
-						<span class="label-text"
+						<span class="label-text font-extrabold"
 							>Private Server - If this is enabled, only members of your discord server can see
 							post.</span
 						>
 						<input
 							type="checkbox"
 							class="toggle"
+							@change="form.validate('private')"
 							v-model="form.private"
 						/>
 					</label>
@@ -90,7 +78,17 @@ function submit() {
 					<button
 						class="btn btn-primary btn-sm"
 						type="submit"
+						:disabled="form.processing || !form.isDirty"
 					>
+						<i
+							class="fa-solid fa-floppy-disk"
+							v-show="!form.processing"
+						></i>
+						<i
+							v-show="form.processing"
+							class="fa-solid fa-spinner fa-spin"
+						></i>
+
 						Save
 					</button>
 					<button

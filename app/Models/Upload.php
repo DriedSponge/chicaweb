@@ -9,7 +9,6 @@ class Upload extends Model
 {
     protected $table = 'uploads';
     protected $hidden = ['server_id','user_id','id'];
-    use HasFactory;
 
     public function server()
     {
@@ -18,5 +17,8 @@ class Upload extends Model
     public function author()
     {
         return $this->belongsTo(User::class,'user_id');
+    }
+    public function setPrivate(bool $private){
+        \Storage::setVisibility("uploads/".$this->fileName,$private ? "private" : "public");
     }
 }
