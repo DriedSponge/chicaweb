@@ -31,6 +31,7 @@ Route::middleware(Authenticate::class)->group(function (){
     Route::delete('/servers/{server_id}', [\App\Http\Controllers\ServerController::class, 'deleteServer'])->middleware([HandlePrecognitiveRequests::class])->name("server.delete");
 
 
+    // Post Settings
 
     Route::get("/servers/{server_id}/posts/{post_id}", [\App\Http\Controllers\PostController::class, 'view'])->name("post");
 
