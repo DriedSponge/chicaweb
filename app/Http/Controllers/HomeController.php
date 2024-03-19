@@ -18,7 +18,13 @@ class HomeController extends Controller
             $ownedServers = collect($user->ownedServers()->get());
 
             $uploads->transform(function ($upload) use ($user,$ownedServers){
-                $upload->raw_url = \Storage::url("/uploads/".$upload->fileName);
+                if($upload->server->private){
+                    $upload->raw_url = $upload->generateTempURL();
+
+                }else{
+                    $upload->raw_url = \Storage::url("/uploads/".$upload->fileName);
+                }
+
                 $upload->created_at_distance= $upload->created_at->diffForHumans();
                 $upload->server->name= Str::limit($upload->server->name, 20);
                 $upload->author->name= Str::limit($upload->author->name, 20);
