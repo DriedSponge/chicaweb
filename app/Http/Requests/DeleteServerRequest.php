@@ -23,7 +23,7 @@ class DeleteServerRequest extends FormRequest
      */
     public function rules(Request $request, Server $server): array
     {
-        $serverName = $server->name;
+        $serverName = $request->route("server")->name;
         return [
             "server_name"=>"required|string|in:".$serverName
         ];
