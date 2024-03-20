@@ -17,14 +17,15 @@ class ServerManager
     public function handle(Request $request, Closure $next): Response
     {
         if(\Auth::check()){
+            $server=$request->route("server");
             $user = $request->user();
-            if($user->ownedServers()->where("did",$request->server_id)->exists() || $user->admin){
+            if($server->owner_id = $user->id || $user->admin){
                 return $next($request);
             }
             if($request->expectsJson()){
                 return response()->json(["error"=>"Unauthorized"],403);
             }else{
-                return response(403,403);
+                abort(403);
             }
         }else{
             if($request->expectsJson()) {

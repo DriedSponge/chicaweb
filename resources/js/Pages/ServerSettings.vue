@@ -8,16 +8,12 @@ defineProps({
 	server: Object
 });
 defineOptions({ layout: Layout });
-const form = useForm(
-	"put",
-	route("server.settings.save", { server_id: usePage().props.server.did }),
-	{
-		private: usePage().props.server.private
-	}
-);
+const form = useForm("put", route("server.settings.save", { server: usePage().props.server.did }), {
+	private: usePage().props.server.private
+});
 const deleteForm = useForm(
 	"delete",
-	route("server.delete", { server_id: usePage().props.server.did }),
+	route("server.delete", { server: usePage().props.server.did }),
 	{
 		server_name: null
 	}

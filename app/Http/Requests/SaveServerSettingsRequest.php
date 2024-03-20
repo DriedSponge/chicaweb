@@ -13,12 +13,11 @@ class SaveServerSettingsRequest extends FormRequest
      */
     public function authorize(Request $request): bool
     {
-        $server = Server::where("did",$request->server_id)->first();
-        if($server && \Auth::check()){
+        if(\Auth::check()){
+            $server = $request->route("server");
             $user = \Auth::user();
             if($server->owner_id == $user->id || $user->admin){
                 if($user->admin || !$server->isSuspended()){
-                    $request->merge(["server"=> $server]);
                     return true;
                 }
                 return false;

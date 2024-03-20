@@ -49,4 +49,8 @@ class Server extends Model
             $server->uploads()->delete();
         });
     }
+    public function getRouteKeyName(): string
+    {
+        return 'did';
+    }
 }

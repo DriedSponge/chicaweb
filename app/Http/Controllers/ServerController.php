@@ -15,10 +15,10 @@ use function Termwind\render;
 
 class ServerController extends Controller
 {
-    public function view(Request $request, $server_id)
+    public function view(Request $request, Server $server)
     {
         $user = $request->user();
-        $server = Server::where("did",$server_id)->with("owner")->first();
+        // $server = Server::where("did",$server_id)->with("owner")->first();
         if($server){
             if($server->isSuspended() && (\Auth::check() && !$user->admin)){
                 return response("Not found",404);
@@ -29,7 +29,7 @@ class ServerController extends Controller
 
             $userPerms = new stdClass();
             if(\Auth::check()){
-                $userPerms->canLeave= $server->owner?->id != $user->id && $user->servers()->where("did",$server_id)->exists();
+                $userPerms->canLeave= $server->owner?->id != $user->id && $user->servers()->where("did",$server->did)->exists();
                 $userPerms->canEdit = $server->owner?->id == $user->id || $user->admin;
             }else{
                 $userPerms->canLeave=false;
@@ -56,24 +56,18 @@ class ServerController extends Controller
             return response("Not found",404);
         }
     }
-    public function serverSettings(Request $request,$server_id){
-        $server = Server::where("did",$server_id)->first();
-        if(!$server){
-            return response(404,404);
-        }
+    public function serverSettings(Request $request,Server $server){
         return Inertia::render("ServerSettings",["server"=>$server]);
-
     }
-    public function saveSettings(SaveServerSettingsRequest $request,$server_id){
-        $server = $request["server"];
+    public function saveSettings(SaveServerSettingsRequest $request,Server $server){
         $server->private=$request->validated()["private"];
         $server->save();
         UpdatePrivacy::dispatch($server);
-        return redirect(route("server.settings",["server_id"=>$server_id]));
+        return redirect(route("server.settings",["server"=>$server]));
     }
-    public function deleteServer(DeleteServerRequest $request)
+    public function deleteServer(DeleteServerRequest $request,Server $server)
     {
-        $request["server"]->delete();
+        $server->delete();
         return redirect(route("home"));
     }
 
