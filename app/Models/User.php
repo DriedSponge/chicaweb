@@ -62,4 +62,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Suspension::class,"user_id","did");
     }
+    public function isSuspended():bool
+    {
+        return $this->suspension()->where("active",true)->exists();
+    }
 }

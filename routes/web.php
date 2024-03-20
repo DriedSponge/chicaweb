@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ServerController;
 use App\Http\Middleware\Authenticate;
 use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
@@ -24,23 +25,27 @@ Route::middleware(Authenticate::class)->group(function (){
     Route::get('/servers', [\App\Http\Controllers\BrowseController::class, 'servers'])->name("servers");
 
     // Server Settings
-    Route::middleware(\App\Http\Middleware\ServerManager::class)->group(function (){
-        Route::get('/servers/{server}/settings', [\App\Http\Controllers\ServerController::class, 'serverSettings'])->name("server.settings");
-    });
-
-    Route::put('/servers/{server}/settings', [\App\Http\Controllers\ServerController::class, 'saveSettings'])->middleware([HandlePrecognitiveRequests::class])->name("server.settings.save");
-    Route::delete('/servers/{server}', [\App\Http\Controllers\ServerController::class, 'deleteServer'])->middleware([HandlePrecognitiveRequests::class])->name("server.delete");
-
+    Route::get('/servers/{server}/settings', [ServerController::class, 'serverSettings'])
+        ->can("update","server")
+        ->name("server.settings");
+    Route::put('/servers/{server}/settings', [ServerController::class, 'saveSettings'])
+        ->can("update","server")
+        ->middleware([HandlePrecognitiveRequests::class])->name("server.settings.save");
+    Route::delete('/servers/{server}', [ServerController::class, 'deleteServer'])
+        ->can("forceDelete","server")
+        ->middleware([HandlePrecognitiveRequests::class])
+        ->name("server.delete");
 
     // Post Settings
-
     Route::get("/servers/{server_id}/posts/{post_id}", [\App\Http\Controllers\PostController::class, 'view'])->name("post");
 
 });
 
 
-//Servers
-Route::get('/servers/{server}', [\App\Http\Controllers\ServerController::class, 'view'])->name("server");
+// Individual Server
+Route::get('/servers/{server}', [\App\Http\Controllers\ServerController::class, 'view'])
+    ->can("view","server")
+    ->name("server");
 
 
 

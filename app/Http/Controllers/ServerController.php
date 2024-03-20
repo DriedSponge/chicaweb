@@ -18,15 +18,8 @@ class ServerController extends Controller
     public function view(Request $request, Server $server)
     {
         $user = $request->user();
-        // $server = Server::where("did",$server_id)->with("owner")->first();
-        if($server){
-            if($server->isSuspended() && (\Auth::check() && !$user->admin)){
-                return response("Not found",404);
-            }
-
             $server->totalPosts = $server->uploads()->count();
             $server->totalUsers = $server->users()->count();
-
             $userPerms = new stdClass();
             if(\Auth::check()){
                 $userPerms->canLeave= $server->owner?->id != $user->id && $user->servers()->where("did",$server->did)->exists();
@@ -38,23 +31,21 @@ class ServerController extends Controller
 
             $server->makeHidden("owner");
 
-            if($server->private){
-                if(!\Auth::check()){
-                    return redirect()->route("loginPage");
-                }else if($user->servers->contains($server)){
-                    return Inertia::render("Server",["server"=>$server,"perms"=>$userPerms]);
-                }else{
-                    return response("Not found",404);
-                }
-            }
+//            if($server->private){
+//                if(!\Auth::check()){
+//                    return redirect()->route("loginPage");
+//                }else if($user->servers->contains($server)){
+//                    return Inertia::render("Server",["server"=>$server,"perms"=>$userPerms]);
+//                }else{
+//                    return response("Not found",404);
+//                }
+//            }
 
             // http://localhost/servers/343920171100012558
 
 
             return Inertia::render("Server",["server"=>$server,"perms"=>$userPerms]);
-        }else {
-            return response("Not found",404);
-        }
+
     }
     public function serverSettings(Request $request,Server $server){
         return Inertia::render("ServerSettings",["server"=>$server]);

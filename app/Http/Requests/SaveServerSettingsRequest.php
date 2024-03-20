@@ -11,25 +11,15 @@ class SaveServerSettingsRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(Request $request): bool
+    public function authorize(): bool
     {
-        if(\Auth::check()){
-            $server = $request->route("server");
-            $user = \Auth::user();
-            if($server->owner_id == $user->id || $user->admin){
-                if($user->admin || !$server->isSuspended()){
-                    return true;
-                }
-                return false;
-            }
-        }
-        return false;
+        return true;
     }
 
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return
      */
     public function rules(): array
     {
